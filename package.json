@@ -1,0 +1,17 @@
+{
+  "name": "node-weather-app",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Saurav Jha sauravjha24@gmail.com",
+  "main": "server.js",
+  "scripts": {
+    "start": "node app/app.js",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chalk": "^4.1.0",
+    "express": "^4.17.1",
+    "mocha": "^8.2.0"
+  }
+}
