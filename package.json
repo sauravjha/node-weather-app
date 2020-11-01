@@ -5,7 +5,7 @@
   "author": "Saurav Jha sauravjha24@gmail.com",
   "main": "server.js",
   "scripts": {
-    "start": "node app/app.js",
+    "start": "node web-server/src/app.js",
     "test": "mocha"
   },
   "dependencies": {
