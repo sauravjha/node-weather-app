@@ -3,6 +3,12 @@ const express = require('express')
 const hbs = require('hbs')
 const app = express()
 
+const request = require("request")
+
+const geocode = require("./utils/geocode")
+const forecast = require("./utils/forecast")
+const { error } = require('console')
+
 console.log(__dirname)
 console.log(__filename)
 console.log(path.join(__dirname, '../public'))
@@ -58,11 +64,77 @@ app.get('/about', (req, res)=>{
 })
 
 app.get('/weather', (req, res)=>{
-    res.send({
-        forcast: "Partly Cloudy",
-        location: "Broadmedows"
+    console.log()
+    if(req.query.address) {
+        getForcast(req.query.address, res)
+    } else {
+        res.render('index', {
+            title: "Weather",
+            address: "Address was not sent",
+            name: 'Kaira Jha'
+        })
+    }
+})
+
+app.get('/weather2', (req, res) => {
+    const address = req.query.address
+    geocode(address, (error, geodata) =>{
+        if (error) {
+            res.send({
+                title: "Weather",
+                address: error,
+                name: 'Kaira Jha'
+            })
+        } else {
+            forecast(geodata.latitude, geodata.logitude, (error, forcast) =>{
+                if(error) {
+                    res.send({
+                        title: "Weather",
+                        address: error,
+                        name: 'Kaira Jha'
+                    })
+                } else {
+                    console.log(forcast);
+                    res.send({
+                        forcast: 'Currently temperature is ' + forcast.temperature + ' degree celsius but feels like ' + forcast.feelslike + ' degree celsius Rain posibility ' + forcast.rain + '% and its is ' + forcast.weather_description ,
+                        location: geodata.location,
+                        address: address
+                    })
+                }
+            })
+        }
     })
 })
+
+const getForcast = (address, res) => {
+    geocode(address, (error, geodata) =>{
+        if (error) {
+            res.render('index', {
+                title: "Weather",
+                address: error,
+                name: 'Kaira Jha'
+            })
+        } else {
+            forecast(geodata.latitude, geodata.logitude, (error, forcast) =>{
+                if(error) {
+                    res.render('index', {
+                        title: "Weather",
+                        address: error,
+                        name: 'Kaira Jha'
+                    })
+                } else {
+                    console.log(forcast);
+                    res.render('index', {
+                        title: "Weather",
+                        address:  'Currently in ' + geodata.location +' temperature is ' + forcast.temperature + ' degree celsius but feels like ' + forcast.feelslike + ' degree celsius Rain posibility ' + forcast.rain + '% and its is ' + forcast.weather_description ,
+                        name: 'Kaira Jha'
+                    })
+                }
+            })
+        }
+    })
+}
+
 
 app.get('*', (req, res)=>{
     res.render('help', {
